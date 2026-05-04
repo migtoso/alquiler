@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+
+  # ─────────────────────────────────────────
+  # DATABASE for vehiculos-service
+  # ─────────────────────────────────────────
+  mysql-vehiculos:
+    image: mysql:8.0
+    container_name: mysql-vehiculos
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vehiculos_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_vehiculos_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─────────────────────────────────────────
+  # DATABASE for operaciones-service
+  # ─────────────────────────────────────────
+  mysql-operaciones:
+    image: mysql:8.0
+    container_name: mysql-operaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: operaciones_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_operaciones_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─────────────────────────────────────────
+  # EUREKA SERVER - Service registry
+  # ─────────────────────────────────────────
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # ─────────────────────────────────────────
+  # VEHICULOS SERVICE
+  # ─────────────────────────────────────────
+  vehiculos-service:
+    build: ./vehiculos-service
+    container_name: vehiculos-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-vehiculos:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-vehiculos:3306/vehiculos_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+
+  # ─────────────────────────────────────────
+  # OPERACIONES SERVICE
+  # ─────────────────────────────────────────
+  operaciones-service:
+    build: ./operaciones-service
+    container_name: operaciones-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql-operaciones:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-operaciones:3306/operaciones_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+
+  # ─────────────────────────────────────────
+  # GATEWAY SERVER - Single entry point
+  # ─────────────────────────────────────────
+  gateway-server:
+    build: ./gateway-server
+    container_name: gateway-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+
+volumes:
+  mysql_vehiculos_data:
+  mysql_operaciones_data:

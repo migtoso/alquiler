@@ -1,7 +1,0 @@
-com\alquiler\operaciones\OperacionesServiceApplication.class
-com\alquiler\operaciones\repository\AlquilerRepository.class
-com\alquiler\operaciones\controller\AlquilerController.class
-com\alquiler\operaciones\service\AlquilerService.class
-com\alquiler\operaciones\config\WebClientConfig.class
-com\alquiler\operaciones\model\Alquiler.class
-com\alquiler\operaciones\client\VehiculosClient.class

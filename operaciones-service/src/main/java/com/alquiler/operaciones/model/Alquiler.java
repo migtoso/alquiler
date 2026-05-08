@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "alquileres")
 @Data
@@ -35,8 +36,4 @@ public class Alquiler {
     @NotNull(message = "La fecha final es obligatoria")
     @Column(name = "fecha_final", nullable = false)
     private LocalDate fechaFinal;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado_solicitud", nullable = false)
-    private EstadoSolicitud estadoSolicitud = EstadoSolicitud.PENDIENTE;
 }

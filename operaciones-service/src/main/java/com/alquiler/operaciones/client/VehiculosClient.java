@@ -25,13 +25,4 @@ public class VehiculosClient {
                 .block();
     }
 
-    public void updateEstado(Long vehiculoId, String nuevoEstado) {
-        webClientBuilder.build()
-                .patch()
-                .uri(vehiculosServiceUrl + "/vehiculos/" + vehiculoId + "/estado")
-                .bodyValue(Map.of("estado", nuevoEstado))
-                .retrieve()
-                .bodyToMono(Void.class)
-                .block();
-    }
 }

@@ -15,6 +15,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql_vehiculos_data:/var/lib/mysql
+      - ./init-scripts/vehiculos-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
@@ -34,6 +35,7 @@ services:
       - "3308:3306"
     volumes:
       - mysql_operaciones_data:/var/lib/mysql
+      - ./init-scripts/operaciones-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s

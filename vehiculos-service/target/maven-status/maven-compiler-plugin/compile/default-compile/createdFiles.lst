@@ -1,0 +1,6 @@
+com\alquiler\vehiculos\model\EstadoVehiculo.class
+com\alquiler\vehiculos\repository\VehiculoRepository.class
+com\alquiler\vehiculos\service\VehiculoService.class
+com\alquiler\vehiculos\controller\VehiculoController.class
+com\alquiler\vehiculos\VehiculosServiceApplication.class
+com\alquiler\vehiculos\model\Vehiculo.class

@@ -32,7 +32,7 @@ public class AlquilerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Registrar un nuevo alquiler - valida la disponibilidad del vehículo
+    // Registrar un nuevo alquiler
     @PostMapping
     public ResponseEntity<?> registrar(@Valid @RequestBody Alquiler alquiler) {
         try {
@@ -46,17 +46,5 @@ public class AlquilerController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
-    // Cancelar un alquiler
-    @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<?> cancelar(@PathVariable Long id) {
-        try {
-            return alquilerService.cancelarAlquiler(id)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 }
+

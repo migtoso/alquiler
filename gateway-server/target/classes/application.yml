@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-server
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: vehiculos-service
+          uri: lb://vehiculos-service
+          predicates:
+            - Path=/vehiculos/**
+
+        - id: operaciones-service
+          uri: lb://operaciones-service
+          predicates:
+            - Path=/operaciones/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
